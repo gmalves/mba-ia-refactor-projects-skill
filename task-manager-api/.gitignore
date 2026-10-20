@@ -1,0 +1,14 @@
+# Variáveis de ambiente (segredos)
+.env
+.env.*
+!.env.example
+
+# Banco de dados local
+instance/
+*.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

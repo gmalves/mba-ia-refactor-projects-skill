@@ -1,0 +1,36 @@
+== Validação P3 (pós-refatoração) ==
+-- GET /health
+{"status":"ok","timestamp":"2026-10-19 21:37:32.468069"}
+
+HTTP:200
+-- GET /tasks (joinedload; sem N+1)
+[{"category_id":1,"category_name":"Backend","created_at":"2026-10-20 00:37:13.598470","description":"Adicionar autentica\u00e7\u00e3o real com JWT","due_date":"2026-10-17 00:37:13.595899","id":1,"overdue":true,"priority":1,"status":"pending","tags":[],"title":"Implementar autentica\u00e7\u00e3o JWT","updated_at":"2026-10-20 00:37:13.598473","user_id":1,"user_name":"Jo\u00e3o Silva"},{"category_id"
+-- GET /users (SEM campo password)
+[{"active":true,"created_at":"2026-10-20 00:37:13.593901","email":"joao@email.com","id":1,"name":"Jo\u00e3o Silva","role":"admin","task_count":4},{"active":true,"created_at":"2026-10-20 00:37:13.593911","email":"maria@email.com","id":2,"name":"Maria Santos","role":"user","task_count":3},{"active":true,"created_at":"2026-10-20 00:37:13.593912","email":"pedro@email.com","id":3,"name":"Pedro Oliveira
+-- POST /login joao@email.com/1234 (token assinado; sem password)
+{"message":"Login realizado com sucesso","token":"eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4ifQ.ata3zA.LeAblPIF26y97hk89PZCnWNR1dQ","user":{"active":true,"created_at":"2026-10-20 00:37:13.593901","email":"joao@email.com","id":1,"name":"Jo\u00e3o Silva","role":"admin"}}
+
+HTTP:200
+
+-- GET /tasks/stats
+{"cancelled":1,"completion_rate":10.0,"done":1,"in_progress":2,"overdue":2,"pending":6,"total":10}
+
+HTTP:200
+-- GET /reports/summary
+HTTP:200
+-- GET /tasks/9999 (404 esperado)
+{"error":"Task n\u00e3o encontrada"}
+
+HTTP:404
+-- GET /tasks/search?priority=abc (400 validacao, antes 500)
+{"error":"Prioridade inv\u00e1lida"}
+
+HTTP:400
+-- DELETE /tasks/10 sem token (401 esperado)
+{"error":"N\u00e3o autorizado"}
+
+HTTP:401
+-- DELETE /tasks/10 com token (200 esperado)
+{"message":"Task deletada com sucesso"}
+
+HTTP:200
