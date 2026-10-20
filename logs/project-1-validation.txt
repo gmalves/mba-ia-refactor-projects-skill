@@ -1,0 +1,55 @@
+== Validação P1 (pós-refatoração) ==
+-- GET /health (sem secret_key/db_path/debug)
+{"ambiente":"producao","counts":{"pedidos":0,"produtos":10,"usuarios":3},"database":"connected","status":"ok","versao":"1.0.0"}
+
+HTTP:200
+-- GET /produtos (200 esperado)
+HTTP:200
+-- GET /produtos/busca?q=Notebook (busca parametrizada)
+{"dados":[{"ativo":1,"categoria":"informatica","criado_em":"2026-10-19 23:58:07","descricao":"Notebook potente para jogos","estoque":10,"id":12,"nome":"Notebook Gamer","preco":5999.99}],"sucesso":true,"total":1}
+
+HTTP:200
+
+-- POST /login admin@loja.com/admin123 (pbkdf2, upgrade transparente)
+{"dados":{"email":"admin@loja.com","id":5,"nome":"Admin","tipo":"admin"},"mensagem":"Login OK","sucesso":true}
+
+HTTP:200
+-- POST /pedidos valido (201 esperado)
+{"erro":"Usu\u00e1rio n\u00e3o encontrado","sucesso":false}
+
+HTTP:400
+-- POST /pedidos quantidade negativa (400 esperado)
+{"erro":"Usu\u00e1rio n\u00e3o encontrado","sucesso":false}
+
+HTTP:400
+-- GET /produtos/9999 (404 esperado)
+{"erro":"Produto n\u00e3o encontrado","sucesso":false}
+
+HTTP:404
+-- GET /relatorios/vendas (200 esperado)
+{"dados":{"desconto_aplicavel":0.0,"faturamento_bruto":0,"faturamento_liquido":0.0,"pedidos_aprovados":0,"pedidos_cancelados":0,"pedidos_pendentes":0,"ticket_medio":0,"total_pedidos":0},"sucesso":true}
+
+HTTP:200
+
+-- POST /admin/query sem token (401 esperado)
+{"erro":"N\u00e3o autorizado"}
+
+HTTP:401
+-- POST /admin/query com token + SELECT (200 esperado)
+{"dados":[{"total":10}],"sucesso":true}
+
+HTTP:200
+-- GET /usuarios (sem campo senha na resposta)
+{"dados":[{"criado_em":"2026-10-19 23:58:07","email":"admin@loja.com","id":5,"nome":"Admin","tipo":"admin"},{"criado_em":"2026-10-19 23:58:08","email":"joao@email.com","id":6,"nome":"Jo\u00e3o Silva","tipo":"cliente"},{"criado_em":"2026-10-19 23:58:08","email":"maria@email.com","
+-- POST /pedidos valido usuario=5 produto=12 (201 esperado)
+{"dados":{"pedido_id":3,"total":11999.98},"mensagem":"Pedido criado com sucesso","sucesso":true}
+
+HTTP:201
+-- POST /pedidos quantidade negativa usuario=5 (400 validacao esperado)
+{"erro":"Quantidade deve ser positiva","sucesso":false}
+
+HTTP:400
+-- GET /relatorios/vendas apos pedido (200)
+{"dados":{"desconto_aplicavel":1200.0,"faturamento_bruto":11999.98,"faturamento_liquido":10799.98,"pedidos_aprovados":0,"pedidos_cancelados":0,"pedidos_pendentes":1,"ticket_medio":11999.98,"total_pedidos":1},"sucesso":true}
+
+HTTP:200
