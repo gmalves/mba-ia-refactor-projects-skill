@@ -1,0 +1,24 @@
+== Validação P2 (pós-refatoração) ==
+-- GET /api/admin/financial-report (sem token → espera 401)
+Não autorizado
+HTTP:401
+-- GET /api/admin/financial-report (com X-Admin-Token → espera 200)
+[{"course":"Clean Architecture","revenue":997,"students":[{"student":"Leonan","paid":997}]},{"course":"Docker","revenue":0,"students":[]}]
+HTTP:200
+-- POST /api/checkout cartao 4... (espera 200)
+{"msg":"Sucesso","enrollment_id":2}
+HTTP:200
+-- POST /api/checkout cartao 5... (espera 400)
+Pagamento recusado
+HTTP:400
+-- POST /api/checkout cartao invalido (espera 400)
+Bad Request
+HTTP:400
+-- DELETE /api/users/1 sem token (espera 401)
+Não autorizado
+HTTP:401
+-- DELETE /api/users/1 com token (espera 200 + cascade)
+Usuário deletado
+HTTP:200
+-- financial-report apos delete (cascade: receita = 0)
+[{"course":"Clean Architecture","revenue":0,"students":[]},{"course":"Docker","revenue":497,"students":[{"student":"Guilherme","paid":497}]}]
